@@ -56,6 +56,31 @@ namespace TestJQueryMVC.Controllers
             return View(customers);
         }
 
+        [HttpGet]
+        public IActionResult UpdateCustomer(int id)
+        {
+            CustemerCreateModel model = new CustemerCreateModel();
+
+            model.Customer = _context.Customers.Where(c => c.CustomerId == id).FirstOrDefault();
+            List<SelectListItem> counties = _context.Countries
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem { Value = c.Country_Id.ToString(), Text = c.Name }).ToList();
+
+            model.Countries = counties;
+            model.Cities = _context.Cities.Where(x=>x.CountryId == model.Customer.CountryId)
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem { Value = c.City_Id.ToString(), Text = c.Name }).ToList();
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateCustomer(CustemerCreateModel model)
+        {
+            _context.Update(model.Customer);
+            _context.SaveChangesAsync();
+            return View(model);
+        }
+
         public IActionResult Index()
         {
             return View();
