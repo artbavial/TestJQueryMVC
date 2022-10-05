@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using TestJQueryMVC.Data;
@@ -59,28 +60,54 @@ namespace TestJQueryMVC.Controllers
         [HttpGet]
         public IActionResult UpdateCustomer(int id)
         {
-            CustemerCreateModel model = new CustemerCreateModel();
+            var customer = _context.Customers.Find(id);
+            if (customer is null)
+            {
+                return NotFound();
+            }
 
-            model.Customer = _context.Customers.Where(c => c.CustomerId == id).FirstOrDefault();
+            var model = new CustomerUpdateModel(customer);
+
             List<SelectListItem> counties = _context.Countries
                 .OrderBy(c => c.Name)
                 .Select(c => new SelectListItem { Value = c.Country_Id.ToString(), Text = c.Name }).ToList();
 
             model.Countries = counties;
             model.Cities = _context.Cities
-                .Where(x=>x.CountryId == model.Customer.CountryId)
+                .Where(x=>x.CountryId == model.CountryId)
                 .OrderBy(c => c.Name)
                 .Select(c => new SelectListItem { Value = c.City_Id.ToString(), Text = c.Name }).ToList();
 
             return View(model);
         }
+
         [HttpPost]
-        public async Task<IActionResult> UpdateCustomer(CustemerCreateModel model)
+        public async Task<IActionResult> UpdateCustomer(CustomerUpdateModel model)
         {
-            _context.Update(model.Customer);
+            if (!ModelState.IsValid)
+            {
+                List<SelectListItem> counties = _context.Countries
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem { Value = c.Country_Id.ToString(), Text = c.Name }).ToList();
+
+                model.Countries = counties;
+                model.Cities = _context.Cities
+                    .Where(x => x.CountryId == model.CountryId)
+                    .OrderBy(c => c.Name)
+                    .Select(c => new SelectListItem { Value = c.City_Id.ToString(), Text = c.Name }).ToList();
+
+                return View(model);
+            }
+
+            var customer = await _context.Customers.FindAsync(model.CustomerId);
+            customer!.Name = model.Name;
+            customer.CountryId = model.CountryId;
+            customer.CityId = model.CityId;
+
+            _context.Update(customer);
             await _context.SaveChangesAsync();
      
-            return View(model);
+            return UpdateCustomer(model.CustomerId);
         }
 
         public IActionResult Index()

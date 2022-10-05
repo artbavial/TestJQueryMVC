@@ -1,4 +1,4 @@
-﻿@model TestJQueryMVC.ViewModel.CustemerCreateModel
+﻿@model TestJQueryMVC.ViewModel.CustomerUpdateModel
 
 @{
     ViewData["Title"] = "UpdateCustomer";
@@ -12,23 +12,25 @@
     <div class="col-md-4">
         <form asp-action="UpdateCustomer">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="@Model.Customer.CustomerId" />
+            <input type="hidden" asp-for="@Model.CustomerId" />
             <div class="form-group">
-                <label asp-for="@Model.Customer.Name" class="control-label"></label>
-                <input asp-for="@Model.Customer.Name" class="form-control" />
-                <span asp-validation-for="@Model.Customer.Name" class="text-danger"></span>
+                <label asp-for="@Model.Name" class="control-label"></label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.Customer.CountryId" class="control-label"></label>
-                <select id="lstCountry" asp-for="@Model.Customer.CountryId" class="form-control" asp-items="@Model.Countries">
+                <label asp-for="@Model.CountryId" class="control-label"></label>
+                <select id="lstCountry" asp-for="@Model.CountryId" class="form-control" asp-items="@Model.Countries">
                     <option value="">Выберите страну</option>
                 </select>
+                <span asp-validation-for="@Model.CountryId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="@Model.Customer.CityId" class="control-label"></label>
-                <select id="lstCity" asp-for="@Model.Customer.CityId" class="form-control" asp-items="@Model.Cities">
-                    <option value="">Выберите город</option>
+                <label asp-for="@Model.CityId" class="control-label"></label>
+                <select id="lstCity" asp-for="@Model.CityId" class="form-control" asp-items="@Model.Cities">
+                    <option value="-1">Выберите город</option>
                 </select>
+                <span asp-validation-for="@Model.CityId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -38,7 +40,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="List">Back to List</a>
 </div>
 
 @section Scripts {
@@ -58,7 +60,7 @@
                         function (cities) {
                             if (cities != null && !jQuery.isEmptyObject(cities)) {
                                 citySelect.append($('<option/>', {
-                                    value: null,
+                                    value: -1,
                                     text: "Выберите город"
                                 }));
 

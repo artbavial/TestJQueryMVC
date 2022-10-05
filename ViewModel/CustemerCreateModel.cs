@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using TestJQueryMVC.Data;
 using TestJQueryMVC.Models;
 
 namespace TestJQueryMVC.ViewModel

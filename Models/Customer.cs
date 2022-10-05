@@ -15,12 +15,10 @@ namespace TestJQueryMVC.Models
 
         [DisplayName("Cтрана")]
         public int? CountryId { get; set; }
-        public virtual Country Country { get; set; }
+        public virtual Country? Country { get; set; }
 
         [DisplayName("Город")]
         public int? CityId { get; set; }
-        public virtual City City { get; set; }
-        
-
+        public virtual City? City { get; set; }
     }
 }
