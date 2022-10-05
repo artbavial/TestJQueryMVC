@@ -34,7 +34,7 @@ namespace TestJQueryMVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetCities(int CountryId)
+        public IEnumerable<SelectListItem> GetCities(int CountryId)
         {
             if(CountryId != 0)
             {
@@ -42,12 +42,12 @@ namespace TestJQueryMVC.Controllers
                     .OrderBy(c => c.Name)
                     .Select(n => new SelectListItem
                     {
-                        Value = n.CountryId.ToString(),
+                        Value = n.City_Id.ToString(),
                         Text = n.Name
                     }).ToList();
-                return Json(citiesSel);
+                return citiesSel;
             }
-            return null;
+            return Enumerable.Empty<SelectListItem>();
         }
 
         public IActionResult List()
@@ -67,7 +67,8 @@ namespace TestJQueryMVC.Controllers
                 .Select(c => new SelectListItem { Value = c.Country_Id.ToString(), Text = c.Name }).ToList();
 
             model.Countries = counties;
-            model.Cities = _context.Cities.Where(x=>x.CountryId == model.Customer.CountryId)
+            model.Cities = _context.Cities
+                .Where(x=>x.CountryId == model.Customer.CountryId)
                 .OrderBy(c => c.Name)
                 .Select(c => new SelectListItem { Value = c.City_Id.ToString(), Text = c.Name }).ToList();
 
@@ -77,7 +78,8 @@ namespace TestJQueryMVC.Controllers
         public async Task<IActionResult> UpdateCustomer(CustemerCreateModel model)
         {
             _context.Update(model.Customer);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+     
             return View(model);
         }
 
