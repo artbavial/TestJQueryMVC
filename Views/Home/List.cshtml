@@ -4,7 +4,7 @@
     ViewData["Title"] = "List";
 }
 
-<h1>List</h1>
+<h1>Список Customers</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -25,23 +25,80 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Country.Country_Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City.City_Id)
-            </td>
-            <td>
-                <a asp-action="UpdateCustomer" asp-route-id="@item.CustomerId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CustomerId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CustomerId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City.Name)
+                </td>
+                <td>
+                    <a href="#" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#profileModal-@item.CustomerId" data-bs-placement="center" title="Просмотр карточки @item.Name">
+                        <i class="bi bi-person-square"></i>
+                    </a>
+
+                    <a class="btn btn-primary" asp-action="UpdateCustomer" asp-route-id="@item.CustomerId" title="Изменить данные">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-@item.CustomerId" data-bs-placement="top" title="Удалить">
+                        <i class="bi bi-person-square"></i>
+                    </a>
+                </td>
+
+                <!-- Modal Delete -->
+                <div class="modal fade" id="exampleModal-@item.CustomerId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Удаление гражданина из БД</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Вы действительно хотите удалить гражданина @item.Name?
+                            </div>
+                            <div class="modal-footer">
+                                <form asp-action="Delete">
+                                    <input type="hidden" name="customerId" value="@item.CustomerId" />
+                                    <input type="submit" value="Да, удалить" class="btn btn-danger" />
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal Delete End-->
+
+                <!-- Modal Profile -->
+                <div class="modal fade" id="profileModal-@item.CustomerId" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">@item.Name</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="https://www.digifai.com/wp-content/uploads/2020/12/Avatar_Male-150x150.png" class="card-img-top" /><br><br>
+                               <h5>Город проживания: @item.City.Name</h5>
+                               <h5>Гражданство: @item.Country.Name</h5>
+                            </div>
+                            <div class="modal-footer">
+                                <form>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal Profile End-->
+
+            </tr>
+        }
     </tbody>
 </table>
+

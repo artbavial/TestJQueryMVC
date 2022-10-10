@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using TestJQueryMVC.Data;
 using TestJQueryMVC.Models;
@@ -33,6 +34,21 @@ namespace TestJQueryMVC.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(Customer customer)
+        {
+            var dbCustomer = new Customer
+            {
+                Name = customer.Name,
+                CountryId = customer.CountryId,
+                CityId = customer.CityId
+            };
+
+            await _context.Customers.AddAsync(dbCustomer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("List");
+        }
+
         [HttpGet]
         public IEnumerable<SelectListItem> GetCities(int CountryId)
         {
@@ -52,7 +68,11 @@ namespace TestJQueryMVC.Controllers
 
         public IActionResult List()
         {
-            List<Customer> customers = _context.Customers.ToList();
+            var customers = _context.Customers
+                .Include(u => u.Country)
+                .Include(u => u.City)
+                .ToList();
+
             return View(customers);
         }
 
@@ -82,6 +102,17 @@ namespace TestJQueryMVC.Controllers
      
             return View(model);
         }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> Delete(int customerId)
+        {
+            var customer = await _context.Customers.FindAsync(customerId);
+            _context.Remove(customer);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("List");
+        }
+
 
         public IActionResult Index()
         {
